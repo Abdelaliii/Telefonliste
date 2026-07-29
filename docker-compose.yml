@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  telefonverzeichnis:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: telefonverzeichnis:latest
+    container_name: telefonverzeichnis
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - telefonverzeichnis_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+
+volumes:
+  telefonverzeichnis_data:
+    driver: local
