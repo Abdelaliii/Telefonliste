@@ -371,9 +371,12 @@ export default function App() {
       {/* Printable Header - Visible ONLY when printing */}
       <div className="hidden print:block p-4 border-b border-slate-300 mb-4">
         <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-bold text-black">Telefon- und Kontaktverzeichnis</h1>
-            <p className="text-xs text-slate-600">Verwaltungsausgabe · Stand: {new Date().toLocaleDateString('de-DE')}</p>
+          <div className="flex items-center gap-3">
+            <img src="/logo.svg" alt="Systeex Logo" className="h-10 w-auto" style={{ filter: 'brightness(0) saturate(100%)' }} />
+            <div>
+              <h1 className="text-xl font-bold text-black">Telefon- und Kontaktverzeichnis</h1>
+              <p className="text-xs text-slate-600">Systeex · Verwaltungsausgabe · Stand: {new Date().toLocaleDateString('de-DE')}</p>
+            </div>
           </div>
           <div className="text-right text-xs text-slate-500">
             Gesamt: {contacts.length} Kontakte

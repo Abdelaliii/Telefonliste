@@ -39,9 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
           
           {/* Logo & Title */}
           <div className="flex items-center gap-3.5">
-            <div className="p-3 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl text-white shadow-lg shadow-blue-900/30 ring-1 ring-white/10">
-              <Building2 className="w-7 h-7" />
-            </div>
+            <img src="/logo.svg" alt="Systeex Logo" className="h-10 sm:h-12 w-auto" />
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
@@ -63,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
                 <span className="hidden md:inline text-slate-600">•</span>
                 <span className="hidden md:inline text-slate-400">
-                  Automatische LocalStorage-Persistenz
+                  Zentrale Server-Datenhaltung
                 </span>
               </p>
             </div>

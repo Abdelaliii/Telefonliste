@@ -34,10 +34,16 @@ export function generateStandaloneHtml(contacts: Contact[], title = 'Telefon- un
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         
         <!-- Title & Stats Badges -->
+        <!-- Logo -->
         <div class="flex items-center gap-3.5">
-          <div class="p-3 bg-blue-600 rounded-2xl text-white shadow-md shadow-blue-900/30">
-            <i class="fa-solid fa-address-book text-2xl"></i>
-          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" fill="none" class="h-10 sm:h-12 w-auto">
+            <text x="0" y="38" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="bold" letter-spacing="-1">
+              <tspan fill="#ffffff">syst</tspan><tspan fill="#e8601c">ee</tspan><tspan fill="#ffffff">x</tspan>
+            </text>
+            <rect x="79" y="2" width="4" height="12" rx="1" fill="#e8601c"/>
+            <rect x="85" y="2" width="4" height="18" rx="1" fill="#e8601c"/>
+            <rect x="91" y="2" width="4" height="8" rx="1" fill="#e8601c"/>
+          </svg>
           <div>
             <div class="flex items-center gap-2">
               <h1 class="text-2xl font-bold tracking-tight text-white">${title}</h1>
