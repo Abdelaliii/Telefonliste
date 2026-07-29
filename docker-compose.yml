@@ -9,7 +9,7 @@ services:
     container_name: telefonverzeichnis
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - telefonverzeichnis_data:/app/data
     environment:
