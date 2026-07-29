@@ -206,11 +206,11 @@ export const ContactModal: React.FC<ContactModalProps> = ({
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center gap-1">
                 <Phone className="w-3.5 h-3.5 text-blue-500" />
-                Festnetznummer *
+                Festnetznummer (optional)
               </label>
               <input
                 type="text"
-                required
+
                 value={festnetz}
                 onChange={(e) => setFestnetz(e.target.value)}
                 placeholder="0221 500-123"

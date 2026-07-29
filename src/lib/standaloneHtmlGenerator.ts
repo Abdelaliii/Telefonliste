@@ -270,8 +270,8 @@ export function generateStandaloneHtml(contacts: Contact[], title = 'Telefon- un
 
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Festnetznummer *</label>
-            <input type="text" id="inputFestnetz" required placeholder="0221 500-123" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Festnetznummer (optional)</label>
+            <input type="text" id="inputFestnetz" placeholder="0221 500-123" class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-700 mb-1">Mobilnummer (optional)</label>
