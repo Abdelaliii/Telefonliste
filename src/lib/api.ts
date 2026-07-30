@@ -174,7 +174,13 @@ export async function importContactsApi(imported: Contact[], mode: 'replace' | '
     current = imported;
   } else {
     const existingIds = new Set(current.map((c) => c.id));
-    const newItems = imported.filter((c) => !existingIds.has(c.id));
+    const existingKeys = new Set(
+      current.map((c) => `${(c.vorname || '').toLowerCase().trim()}|${(c.nachname || '').toLowerCase().trim()}|${(c.standort || '').toLowerCase().trim()}`)
+    );
+    const newItems = imported.filter((c) => {
+      const key = `${(c.vorname || '').toLowerCase().trim()}|${(c.nachname || '').toLowerCase().trim()}|${(c.standort || '').toLowerCase().trim()}`;
+      return !existingIds.has(c.id) && !existingKeys.has(key);
+    });
     current = [...newItems, ...current];
   }
   saveContactsToStorage(current);

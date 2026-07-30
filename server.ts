@@ -184,9 +184,15 @@ app.post('/api/import', (req, res) => {
   if (mode === 'replace') {
     current = imported;
   } else {
-    // merge
+    // merge without duplicating (match by ID or Name+Vorname+Standort)
     const existingIds = new Set(current.map((c: any) => c.id));
-    const newItems = imported.filter((c: any) => !existingIds.has(c.id));
+    const existingKeys = new Set(
+      current.map((c: any) => `${(c.vorname || '').toLowerCase().trim()}|${(c.nachname || '').toLowerCase().trim()}|${(c.standort || '').toLowerCase().trim()}`)
+    );
+    const newItems = imported.filter((c: any) => {
+      const key = `${(c.vorname || '').toLowerCase().trim()}|${(c.nachname || '').toLowerCase().trim()}|${(c.standort || '').toLowerCase().trim()}`;
+      return !existingIds.has(c.id) && !existingKeys.has(key);
+    });
     current = [...newItems, ...current];
   }
 
