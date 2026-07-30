@@ -36,6 +36,40 @@ function ensureDataFiles() {
 
 ensureDataFiles();
 
+// Self-cleaning routine on startup to remove duplicates from live storage
+function cleanDuplicateContacts() {
+  if (fs.existsSync(CONTACTS_FILE)) {
+    try {
+      const raw = fs.readFileSync(CONTACTS_FILE, 'utf-8');
+      const contacts = JSON.parse(raw);
+      if (Array.isArray(contacts)) {
+        const seen = new Set<string>();
+        const uniqueContacts: any[] = [];
+        let duplicatesCount = 0;
+        
+        for (const c of contacts) {
+          const key = `${(c.vorname || '').toLowerCase().trim()}|${(c.nachname || '').toLowerCase().trim()}|${(c.standort || '').toLowerCase().trim()}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            uniqueContacts.push(c);
+          } else {
+            duplicatesCount++;
+          }
+        }
+        
+        if (duplicatesCount > 0) {
+          fs.writeFileSync(CONTACTS_FILE, JSON.stringify(uniqueContacts, null, 2), 'utf-8');
+          console.log(`[Server DB Cleanup] Removed ${duplicatesCount} duplicate contacts.`);
+        }
+      }
+    } catch (err) {
+      console.error('[Server DB Cleanup] Error during deduplication:', err);
+    }
+  }
+}
+
+cleanDuplicateContacts();
+
 // Helper read/write
 function readContacts() {
   try {
