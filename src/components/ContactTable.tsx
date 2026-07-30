@@ -20,6 +20,7 @@ interface ContactTableProps {
   contacts: Contact[];
   sortField: SortField;
   sortOrder: SortOrder;
+  isUnlocked: boolean;
   onSort: (field: SortField) => void;
   onEdit: (contact: Contact) => void;
   onDelete: (contact: Contact) => void;
@@ -32,6 +33,7 @@ export const ContactTable: React.FC<ContactTableProps> = ({
   contacts,
   sortField,
   sortOrder,
+  isUnlocked,
   onSort,
   onEdit,
   onDelete,
@@ -92,17 +94,27 @@ export const ContactTable: React.FC<ContactTableProps> = ({
               >
                 {/* Favorite Star */}
                 <td className="px-3 py-3.5 text-center no-print">
-                  <button
-                    onClick={() => onToggleFavorite(c.id)}
-                    className="p-1 rounded hover:bg-slate-100 transition"
-                    title={c.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}
-                  >
-                    <Star
-                      className={`w-4 h-4 ${
-                        c.isFavorite ? 'fill-amber-400 text-amber-500' : 'text-slate-300 group-hover:text-slate-400'
-                      }`}
-                    />
-                  </button>
+                  {isUnlocked ? (
+                    <button
+                      onClick={() => onToggleFavorite(c.id)}
+                      className="p-1 rounded hover:bg-slate-100 transition"
+                      title={c.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}
+                    >
+                      <Star
+                        className={`w-4 h-4 ${
+                          c.isFavorite ? 'fill-amber-400 text-amber-500' : 'text-slate-300 group-hover:text-slate-400'
+                        }`}
+                      />
+                    </button>
+                  ) : (
+                    <div className="flex justify-center">
+                      <Star
+                        className={`w-4 h-4 ${
+                          c.isFavorite ? 'fill-amber-400 text-amber-500' : 'text-slate-200'
+                        }`}
+                      />
+                    </div>
+                  )}
                 </td>
 
                 {/* Name */}
@@ -209,7 +221,7 @@ export const ContactTable: React.FC<ContactTableProps> = ({
                   </div>
                 </td>
 
-                {/* Actions */}
+                 {/* Actions */}
                 <td className="px-3 py-3.5 text-right no-print whitespace-nowrap">
                   <div className="flex items-center justify-end gap-1">
                     <button
@@ -219,20 +231,24 @@ export const ContactTable: React.FC<ContactTableProps> = ({
                     >
                       <QrCode className="w-4 h-4" />
                     </button>
-                    <button
-                      onClick={() => onEdit(c)}
-                      className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
-                      title="Kontakt bearbeiten"
-                    >
-                      <Edit3 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => onDelete(c)}
-                      className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
-                      title="Kontakt löschen"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {isUnlocked && (
+                      <>
+                        <button
+                          onClick={() => onEdit(c)}
+                          className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                          title="Kontakt bearbeiten"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => onDelete(c)}
+                          className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                          title="Kontakt löschen"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </td>
 

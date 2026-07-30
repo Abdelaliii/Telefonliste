@@ -4,6 +4,7 @@ import { Contact } from '../types';
 
 interface ContactGridProps {
   contacts: Contact[];
+  isUnlocked: boolean;
   onEdit: (contact: Contact) => void;
   onDelete: (contact: Contact) => void;
   onToggleFavorite: (id: string) => void;
@@ -13,6 +14,7 @@ interface ContactGridProps {
 
 export const ContactGrid: React.FC<ContactGridProps> = ({
   contacts,
+  isUnlocked,
   onEdit,
   onDelete,
   onToggleFavorite,
@@ -25,6 +27,7 @@ export const ContactGrid: React.FC<ContactGridProps> = ({
         <ContactCard
           key={contact.id}
           contact={contact}
+          isUnlocked={isUnlocked}
           onEdit={onEdit}
           onDelete={onDelete}
           onToggleFavorite={onToggleFavorite}

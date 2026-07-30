@@ -24,10 +24,12 @@ import {
   saveAbteilungenApi,
   importContactsApi
 } from './lib/api';
-import { generateStandaloneHtml } from './lib/standaloneHtmlGenerator';
 import { Contact as ContactIcon, Plus, Building2, Database, RefreshCw } from 'lucide-react';
 
 export default function App() {
+  // Lock / unlock mode state
+  const [isUnlocked, setIsUnlocked] = useState(false);
+
   // Contacts State
   const [contacts, setContacts] = useState<Contact[]>(() => loadContactsFromStorage());
 
@@ -318,18 +320,19 @@ export default function App() {
     addToast(`${label} in Zwischenablage kopiert!`);
   };
 
-  const handleDownloadStandaloneHtml = () => {
-    const htmlString = generateStandaloneHtml(contacts, 'Telefon- und Kontaktverzeichnis');
-    const blob = new Blob([htmlString], { type: 'text/html;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Telefonverzeichnis_Verwaltung_${new Date().toISOString().slice(0, 10)}.html`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-    addToast('Standalone HTML-Datei erfolgreich heruntergeladen!');
+  const handleToggleLock = () => {
+    if (isUnlocked) {
+      setIsUnlocked(false);
+      addToast('Bearbeitungsmodus gesperrt.', 'info');
+    } else {
+      const password = window.prompt('Bitte geben Sie das Passwort ein, um den Bearbeitungsmodus freizuschalten:');
+      if (password === 'Telefonliste2026!+#') {
+        setIsUnlocked(true);
+        addToast('Bearbeitungsmodus erfolgreich freigeschaltet.', 'success');
+      } else if (password !== null) {
+        addToast('Falsches Passwort!', 'error');
+      }
+    }
   };
 
   const handleExportJson = () => {
@@ -342,20 +345,6 @@ export default function App() {
     setContacts(res.contacts);
     setIsServerConnected(res.isServerConnected);
     addToast(`${importedContacts.length} Kontakte erfolgreich importiert.`);
-  };
-
-  const handleResetSampleData = async () => {
-    if (
-      window.confirm(
-        'Möchten Sie das Telefonverzeichnis wirklich auf alle Kontakte aus dem PDF-Dokument zurücksetzen? Alle bisherigen Änderungen werden überschrieben.'
-      )
-    ) {
-      const res = await resetContactsApi();
-      setContacts(res.contacts);
-      setIsServerConnected(res.isServerConnected);
-      handleResetFilters();
-      addToast('Telefonverzeichnis auf vollständige PDF-Kontaktdaten zurückgesetzt.', 'info');
-    }
   };
 
   const handlePrint = () => {
@@ -388,15 +377,15 @@ export default function App() {
       <Header
         totalContacts={contacts.length}
         locationsCount={allStandorte.length}
+        isUnlocked={isUnlocked}
+        onToggleLock={handleToggleLock}
         onOpenAddModal={() => {
           setEditingContact(null);
           setIsContactModalOpen(true);
         }}
         onOpenMasterDataModal={() => setIsMasterDataModalOpen(true)}
         onOpenImportExportModal={() => setIsImportExportModalOpen(true)}
-        onDownloadStandaloneHtml={handleDownloadStandaloneHtml}
         onPrint={handlePrint}
-        onResetSampleData={handleResetSampleData}
       />
 
       {/* Server Status Banner */}
@@ -477,16 +466,18 @@ export default function App() {
                   Filter zurücksetzen
                 </button>
               ) : null}
-              <button
-                onClick={() => {
-                  setEditingContact(null);
-                  setIsContactModalOpen(true);
-                }}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold transition flex items-center gap-1.5"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Neuen Kontakt anlegen</span>
-              </button>
+              {isUnlocked && (
+                <button
+                  onClick={() => {
+                    setEditingContact(null);
+                    setIsContactModalOpen(true);
+                  }}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold transition flex items-center gap-1.5"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Neuen Kontakt anlegen</span>
+                </button>
+              )}
             </div>
           </div>
         ) : (
@@ -496,6 +487,7 @@ export default function App() {
                 contacts={filteredAndSortedContacts}
                 sortField={sortField}
                 sortOrder={sortOrder}
+                isUnlocked={isUnlocked}
                 onSort={handleSort}
                 onEdit={(contact) => {
                   setEditingContact(contact);
@@ -511,6 +503,7 @@ export default function App() {
             {viewMode === 'cards' && (
               <ContactGrid
                 contacts={filteredAndSortedContacts}
+                isUnlocked={isUnlocked}
                 onEdit={(contact) => {
                   setEditingContact(contact);
                   setIsContactModalOpen(true);
@@ -525,6 +518,7 @@ export default function App() {
             {viewMode === 'grouped' && (
               <ContactGrouped
                 contacts={filteredAndSortedContacts}
+                isUnlocked={isUnlocked}
                 onEdit={(contact) => {
                   setEditingContact(contact);
                   setIsContactModalOpen(true);
@@ -587,7 +581,6 @@ export default function App() {
         onClose={() => setIsImportExportModalOpen(false)}
         onExportJson={handleExportJson}
         onImportJson={handleImportJson}
-        onDownloadStandaloneHtml={handleDownloadStandaloneHtml}
       />
 
       <VCardModal

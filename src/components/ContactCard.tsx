@@ -16,6 +16,7 @@ import { Contact } from '../types';
 
 interface ContactCardProps {
   contact: Contact;
+  isUnlocked: boolean;
   onEdit: (contact: Contact) => void;
   onDelete: (contact: Contact) => void;
   onToggleFavorite: (id: string) => void;
@@ -25,6 +26,7 @@ interface ContactCardProps {
 
 export const ContactCard: React.FC<ContactCardProps> = ({
   contact,
+  isUnlocked,
   onEdit,
   onDelete,
   onToggleFavorite,
@@ -47,17 +49,25 @@ export const ContactCard: React.FC<ContactCardProps> = ({
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
-            <button
-              onClick={() => onToggleFavorite(contact.id)}
-              className="p-1 rounded-lg hover:bg-slate-100 transition no-print"
-              title={contact.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}
-            >
+            {isUnlocked ? (
+              <button
+                onClick={() => onToggleFavorite(contact.id)}
+                className="p-1 rounded-lg hover:bg-slate-100 transition no-print"
+                title={contact.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'}
+              >
+                <Star
+                  className={`w-4 h-4 ${
+                    contact.isFavorite ? 'fill-amber-400 text-amber-500' : 'text-slate-300 group-hover:text-slate-400'
+                  }`}
+                />
+              </button>
+            ) : (
               <Star
                 className={`w-4 h-4 ${
-                  contact.isFavorite ? 'fill-amber-400 text-amber-500' : 'text-slate-300 group-hover:text-slate-400'
+                  contact.isFavorite ? 'fill-amber-400 text-amber-500' : 'text-slate-100'
                 }`}
               />
-            </button>
+            )}
           </div>
         </div>
 
@@ -161,22 +171,24 @@ export const ContactCard: React.FC<ContactCardProps> = ({
           <span>vCard</span>
         </button>
 
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => onEdit(contact)}
-            className="px-2.5 py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg transition font-medium flex items-center gap-1"
-          >
-            <Edit3 className="w-3.5 h-3.5" />
-            <span>Bearbeiten</span>
-          </button>
-          <button
-            onClick={() => onDelete(contact)}
-            className="p-1.5 bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 rounded-lg transition"
-            title="Kontakt löschen"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-        </div>
+        {isUnlocked && (
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onEdit(contact)}
+              className="px-2.5 py-1.5 bg-slate-100 hover:bg-blue-50 text-slate-700 hover:text-blue-600 rounded-lg transition font-medium flex items-center gap-1"
+            >
+              <Edit3 className="w-3.5 h-3.5" />
+              <span>Bearbeiten</span>
+            </button>
+            <button
+              onClick={() => onDelete(contact)}
+              className="p-1.5 bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 rounded-lg transition"
+              title="Kontakt löschen"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
       </div>
 
     </div>

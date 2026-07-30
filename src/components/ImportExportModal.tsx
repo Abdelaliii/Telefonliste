@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { X, Download, Upload, Code2, CheckCircle2, FileText, Share2, Info } from 'lucide-react';
+import { X, Download, Upload, CheckCircle2, FileText, Share2, Info } from 'lucide-react';
 import { Contact } from '../types';
 
 interface ImportExportModalProps {
@@ -8,7 +8,6 @@ interface ImportExportModalProps {
   onClose: () => void;
   onExportJson: () => void;
   onImportJson: (importedContacts: Contact[], mode: 'replace' | 'merge') => void;
-  onDownloadStandaloneHtml: () => void;
 }
 
 export const ImportExportModal: React.FC<ImportExportModalProps> = ({
@@ -17,7 +16,6 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
   onClose,
   onExportJson,
   onImportJson,
-  onDownloadStandaloneHtml,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importMode, setImportMode] = useState<'replace' | 'merge'>('merge');
@@ -155,30 +153,11 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
             </div>
           </div>
 
-          {/* Section 2: Standalone Single HTML File Download */}
-          <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-200 space-y-3">
-            <div className="flex items-center gap-2 text-amber-900 font-semibold text-sm">
-              <Code2 className="w-4 h-4 text-amber-600" />
-              <span>Standalone HTML-Anwendung (.html)</span>
-            </div>
-            <p className="text-xs text-amber-800/90 leading-relaxed">
-              Erzeugt eine <strong>komplett eigenständige .html-Datei</strong> inklusive allen aktuellen Kontakten, Suchfunktionen und Design. Diese Datei kann auf jedem gemeinsamen Netzlaufwerk (z.B. <code className="bg-amber-100 px-1 py-0.5 rounded text-[11px] font-mono">X:\Verwaltung\Telefonliste.html</code>) abgelegt und von jedem Mitarbeiter per Doppelklick geöffnet werden.
-            </p>
-
-            <button
-              onClick={onDownloadStandaloneHtml}
-              className="w-full bg-amber-600 hover:bg-amber-500 active:bg-amber-700 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 shadow-md shadow-amber-900/10"
-            >
-              <Download className="w-4 h-4" />
-              <span>Standalone Telefonverzeichnis.html herunterladen</span>
-            </button>
-          </div>
-
           {/* Info notice */}
           <div className="p-3 bg-blue-50 border border-blue-200/80 rounded-xl flex items-start gap-2.5 text-blue-900 text-xs">
             <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
             <div>
-              <strong>Hinweis für die Verwaltung:</strong> Die Daten werden lokal im Browser (localStorage) gespeichert. Über den JSON Export/Import oder die Standalone-HTML Datei können Sie Aktualisierungen im Team problemlos weitergeben.
+              <strong>Hinweis für die Verwaltung:</strong> Die Daten werden zentral auf dem Server in der Docker-Datenbank gespeichert. Über den JSON Export/Import können Sie manuelle Backups erstellen oder Kontaktdaten importieren.
             </div>
           </div>
 

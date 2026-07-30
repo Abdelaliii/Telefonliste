@@ -5,6 +5,7 @@ import { ContactTable } from './ContactTable';
 
 interface ContactGroupedProps {
   contacts: Contact[];
+  isUnlocked: boolean;
   onEdit: (contact: Contact) => void;
   onDelete: (contact: Contact) => void;
   onToggleFavorite: (id: string) => void;
@@ -14,6 +15,7 @@ interface ContactGroupedProps {
 
 export const ContactGrouped: React.FC<ContactGroupedProps> = ({
   contacts,
+  isUnlocked,
   onEdit,
   onDelete,
   onToggleFavorite,
@@ -72,6 +74,7 @@ export const ContactGrouped: React.FC<ContactGroupedProps> = ({
                   contacts={groupContacts}
                   sortField="nachname"
                   sortOrder="asc"
+                  isUnlocked={isUnlocked}
                   onSort={() => {}}
                   onEdit={onEdit}
                   onDelete={onDelete}
