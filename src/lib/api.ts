@@ -24,6 +24,13 @@ export async function fetchContactsApi(): Promise<{ contacts: Contact[]; isServe
   return { contacts: loadContactsFromStorage(), isServerConnected: false };
 }
 
+function getGermanTimestamp(): string {
+  const d = new Date();
+  const dateStr = d.toLocaleDateString('de-DE');
+  const timeStr = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  return `${dateStr} ${timeStr}`;
+}
+
 // Save or update contact on server
 export async function saveContactApi(contactData: Omit<Contact, 'id'> & { id?: string }): Promise<{ contacts: Contact[]; isServerConnected: boolean }> {
   try {
@@ -45,13 +52,15 @@ export async function saveContactApi(contactData: Omit<Contact, 'id'> & { id?: s
   
   // Local fallback
   const current = loadContactsFromStorage();
+  const timestamp = getGermanTimestamp();
   let updated: Contact[];
   if (contactData.id) {
-    updated = current.map((item) => (item.id === contactData.id ? (contactData as Contact) : item));
+    updated = current.map((item) => (item.id === contactData.id ? { ...item, ...contactData, geandertAm: timestamp } as Contact : item));
   } else {
     const newContact: Contact = {
       ...contactData,
       id: `c-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      geandertAm: timestamp,
     };
     updated = [newContact, ...current];
   }

@@ -122,6 +122,13 @@ app.get('/api/contacts', (req, res) => {
   res.json(contacts);
 });
 
+function getGermanTimestamp(): string {
+  const d = new Date();
+  const dateStr = d.toLocaleDateString('de-DE');
+  const timeStr = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  return `${dateStr} ${timeStr}`;
+}
+
 // POST save single contact (Create or Update)
 app.post('/api/contacts', (req, res) => {
   const contactData = req.body;
@@ -130,19 +137,21 @@ app.post('/api/contacts', (req, res) => {
   }
 
   const contacts = readContacts();
+  const timestamp = getGermanTimestamp();
   if (contactData.id) {
     // Update existing
     const index = contacts.findIndex((c: any) => c.id === contactData.id);
     if (index !== -1) {
-      contacts[index] = { ...contactData, updatedAt: new Date().toISOString() };
+      contacts[index] = { ...contacts[index], ...contactData, geandertAm: timestamp, updatedAt: new Date().toISOString() };
     } else {
-      contacts.unshift({ ...contactData, updatedAt: new Date().toISOString() });
+      contacts.unshift({ ...contactData, geandertAm: timestamp, updatedAt: new Date().toISOString() });
     }
   } else {
     // Create new
     const newContact = {
       ...contactData,
       id: `c-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      geandertAm: timestamp,
       updatedAt: new Date().toISOString()
     };
     contacts.unshift(newContact);

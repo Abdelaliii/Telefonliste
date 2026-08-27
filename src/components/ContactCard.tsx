@@ -14,6 +14,15 @@ import {
 } from 'lucide-react';
 import { Contact } from '../types';
 
+const formatGermanDate = (dateStr?: string) => {
+  if (!dateStr) return '';
+  const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (match) {
+    return `${match[3]}.${match[2]}.${match[1]}`;
+  }
+  return dateStr;
+};
+
 interface ContactCardProps {
   contact: Contact;
   isUnlocked: boolean;
@@ -150,6 +159,34 @@ export const ContactCard: React.FC<ContactCardProps> = ({
           </div>
 
         </div>
+
+        {/* Eintritt/Austritt & Geändert metadata block */}
+        {(contact.eintrittDatum || contact.austrittDatum || contact.geandertAm) && (
+          <div className="mt-3 pt-3 border-t border-slate-100/60 text-[11px] text-slate-500 space-y-1">
+            {(contact.eintrittDatum || contact.austrittDatum) && (
+              <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                {contact.eintrittDatum && (
+                  <div>
+                    <span className="text-slate-400 font-medium">Eintritt ab:</span>{' '}
+                    <span className="font-semibold text-slate-700">{formatGermanDate(contact.eintrittDatum)}</span>
+                  </div>
+                )}
+                {contact.austrittDatum && (
+                  <div>
+                    <span className="text-slate-400 font-medium">Austritt ab:</span>{' '}
+                    <span className="font-semibold text-red-600">{formatGermanDate(contact.austrittDatum)}</span>
+                  </div>
+                )}
+              </div>
+            )}
+            {contact.geandertAm && (
+              <div>
+                <span className="text-slate-400 font-medium">Geändert am:</span>{' '}
+                <span>{contact.geandertAm}</span>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Notes callout */}
         {contact.notizen && (

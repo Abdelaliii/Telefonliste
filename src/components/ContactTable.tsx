@@ -16,6 +16,15 @@ import {
 } from 'lucide-react';
 import { Contact, SortField, SortOrder } from '../types';
 
+const formatGermanDate = (dateStr?: string) => {
+  if (!dateStr) return '';
+  const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (match) {
+    return `${match[3]}.${match[2]}.${match[1]}`;
+  }
+  return dateStr;
+};
+
 interface ContactTableProps {
   contacts: Contact[];
   sortField: SortField;
@@ -83,6 +92,8 @@ export const ContactTable: React.FC<ContactTableProps> = ({
               </th>
               <th className="px-4 py-3.5">Mobil</th>
               <th className="px-4 py-3.5">Email-Adresse</th>
+              <th className="px-4 py-3.5">Eintritt / Austritt</th>
+              <th className="px-4 py-3.5">Geändert am</th>
               <th className="px-3 py-3.5 no-print text-right">Aktionen</th>
             </tr>
           </thead>
@@ -219,6 +230,32 @@ export const ContactTable: React.FC<ContactTableProps> = ({
                       <Copy className="w-3 h-3" />
                     </button>
                   </div>
+                </td>
+
+                {/* Eintritt / Austritt */}
+                <td className="px-4 py-3.5 text-xs text-slate-600 whitespace-nowrap">
+                  <div className="space-y-0.5">
+                    {c.eintrittDatum && (
+                      <div>
+                        <span className="text-slate-400">Ein:</span> {formatGermanDate(c.eintrittDatum)}
+                      </div>
+                    )}
+                    {c.austrittDatum && (
+                      <div className="text-red-600 font-medium">
+                        <span className="text-slate-400">Aus:</span> {formatGermanDate(c.austrittDatum)}
+                      </div>
+                    )}
+                    {!c.eintrittDatum && !c.austrittDatum && <span className="text-slate-300">-</span>}
+                  </div>
+                </td>
+
+                {/* Geändert am */}
+                <td className="px-4 py-3.5 text-xs text-slate-500 whitespace-nowrap">
+                  {c.geandertAm ? (
+                    <span title="Zuletzt geändert am">{c.geandertAm}</span>
+                  ) : (
+                    <span className="text-slate-300">-</span>
+                  )}
                 </td>
 
                  {/* Actions */}

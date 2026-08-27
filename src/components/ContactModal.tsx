@@ -30,6 +30,8 @@ export const ContactModal: React.FC<ContactModalProps> = ({
   const [email, setEmail] = useState('');
   const [raum, setRaum] = useState('');
   const [notizen, setNotizen] = useState('');
+  const [eintrittDatum, setEintrittDatum] = useState('');
+  const [austrittDatum, setAustrittDatum] = useState('');
 
   // Combine default suggestions with user's current unique locations & departments
   const locationList = Array.from(new Set([...STANDORTE_INITIAL, ...allStandorte])).sort();
@@ -47,6 +49,8 @@ export const ContactModal: React.FC<ContactModalProps> = ({
       setEmail(editingContact.email || '');
       setRaum(editingContact.raum || '');
       setNotizen(editingContact.notizen || '');
+      setEintrittDatum(editingContact.eintrittDatum || '');
+      setAustrittDatum(editingContact.austrittDatum || '');
     } else {
       setVorname('');
       setNachname('');
@@ -58,6 +62,8 @@ export const ContactModal: React.FC<ContactModalProps> = ({
       setEmail('');
       setRaum('');
       setNotizen('');
+      setEintrittDatum('');
+      setAustrittDatum('');
     }
   }, [editingContact, isOpen]);
 
@@ -77,6 +83,8 @@ export const ContactModal: React.FC<ContactModalProps> = ({
       email: email.trim(),
       raum: raum.trim(),
       notizen: notizen.trim(),
+      eintrittDatum: eintrittDatum.trim(),
+      austrittDatum: austrittDatum.trim(),
       isFavorite: editingContact?.isFavorite || false,
       updatedAt: new Date().toISOString(),
     });
@@ -258,6 +266,32 @@ export const ContactModal: React.FC<ContactModalProps> = ({
                 value={raum}
                 onChange={(e) => setRaum(e.target.value)}
                 placeholder="Raum 102 (1. OG)"
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+              />
+            </div>
+          </div>
+
+          {/* Eintritt ab & Austritt ab */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Eintritt ab (optional)
+              </label>
+              <input
+                type="date"
+                value={eintrittDatum}
+                onChange={(e) => setEintrittDatum(e.target.value)}
+                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Austritt ab (optional)
+              </label>
+              <input
+                type="date"
+                value={austrittDatum}
+                onChange={(e) => setAustrittDatum(e.target.value)}
                 className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
               />
             </div>

@@ -14,6 +14,9 @@ export interface Contact {
   notizen?: string;
   isFavorite?: boolean;
   updatedAt?: string;
+  eintrittDatum?: string;
+  austrittDatum?: string;
+  geandertAm?: string;
 }
 
 export interface FilterState {
