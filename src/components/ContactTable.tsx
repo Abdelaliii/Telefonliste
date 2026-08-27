@@ -88,12 +88,10 @@ export const ContactTable: React.FC<ContactTableProps> = ({
                 onClick={() => onSort('festnetz')}
                 className="px-4 py-3.5 cursor-pointer hover:bg-slate-200/60 transition select-none"
               >
-                Festnetz {renderSortIcon('festnetz')}
+                Telefon {renderSortIcon('festnetz')}
               </th>
-              <th className="px-4 py-3.5">Mobil</th>
-              <th className="px-4 py-3.5">Email-Adresse</th>
+              <th className="px-4 py-3.5">Email / Geändert am</th>
               <th className="px-4 py-3.5">Eintritt / Austritt</th>
-              <th className="px-4 py-3.5">Geändert am</th>
               <th className="px-3 py-3.5 no-print text-right">Aktionen</th>
             </tr>
           </thead>
@@ -165,58 +163,54 @@ export const ContactTable: React.FC<ContactTableProps> = ({
                   </div>
                 </td>
 
-                {/* Festnetz */}
-                <td className="px-4 py-3.5 font-mono text-xs whitespace-nowrap">
+                {/* Telefon (Festnetz & Mobil) */}
+                <td className="px-4 py-3.5 font-mono text-xs whitespace-nowrap space-y-1">
+                  {/* Festnetz */}
                   <div className="flex items-center gap-1.5">
                     <a
                       href={`tel:${c.festnetz}`}
                       className="text-blue-600 hover:text-blue-800 hover:underline font-semibold flex items-center gap-1"
-                      title="Anrufen"
+                      title="Festnetz anrufen"
                     >
-                      <Phone className="w-3.5 h-3.5 text-blue-500" />
+                      <Phone className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                       {c.festnetz}
                     </a>
                     <button
                       onClick={() => onCopy(c.festnetz, 'Festnetznummer')}
                       className="opacity-0 group-hover:opacity-100 transition p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-600 no-print"
-                      title="Kopieren"
+                      title="Nummer kopieren"
                     >
                       <Copy className="w-3 h-3" />
                     </button>
                   </div>
-                </td>
-
-                {/* Mobil */}
-                <td className="px-4 py-3.5 font-mono text-xs whitespace-nowrap">
+                  {/* Mobil */}
                   {c.mobil ? (
                     <div className="flex items-center gap-1.5">
                       <a
                         href={`tel:${c.mobil}`}
                         className="text-emerald-600 hover:text-emerald-800 hover:underline font-medium flex items-center gap-1"
-                        title="Anrufen"
+                        title="Mobil anrufen"
                       >
-                        <Smartphone className="w-3.5 h-3.5 text-emerald-500" />
+                        <Smartphone className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                         {c.mobil}
                       </a>
                       <button
                         onClick={() => onCopy(c.mobil, 'Mobilnummer')}
                         className="opacity-0 group-hover:opacity-100 transition p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-600 no-print"
-                        title="Kopieren"
+                        title="Nummer kopieren"
                       >
                         <Copy className="w-3 h-3" />
                       </button>
                     </div>
-                  ) : (
-                    <span className="text-slate-300">-</span>
-                  )}
+                  ) : null}
                 </td>
 
-                {/* Email */}
+                {/* Email / Geändert */}
                 <td className="px-4 py-3.5 text-xs">
                   <div className="flex items-center gap-1.5">
                     <a
                       href={`mailto:${c.email}`}
-                      className="text-slate-700 hover:text-blue-600 hover:underline flex items-center gap-1 truncate max-w-[220px]"
+                      className="text-slate-700 hover:text-blue-600 hover:underline flex items-center gap-1 truncate max-w-[200px]"
                       title={`E-Mail an ${c.email}`}
                     >
                       <Mail className="w-3.5 h-3.5 text-amber-500 shrink-0" />
@@ -230,6 +224,12 @@ export const ContactTable: React.FC<ContactTableProps> = ({
                       <Copy className="w-3 h-3" />
                     </button>
                   </div>
+                  {c.geandertAm && (
+                    <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1 whitespace-nowrap">
+                      <span className="font-semibold text-slate-500">Geändert:</span>
+                      <span>{c.geandertAm}</span>
+                    </div>
+                  )}
                 </td>
 
                 {/* Eintritt / Austritt */}
@@ -247,15 +247,6 @@ export const ContactTable: React.FC<ContactTableProps> = ({
                     )}
                     {!c.eintrittDatum && !c.austrittDatum && <span className="text-slate-300">-</span>}
                   </div>
-                </td>
-
-                {/* Geändert am */}
-                <td className="px-4 py-3.5 text-xs text-slate-500 whitespace-nowrap">
-                  {c.geandertAm ? (
-                    <span title="Zuletzt geändert am">{c.geandertAm}</span>
-                  ) : (
-                    <span className="text-slate-300">-</span>
-                  )}
                 </td>
 
                  {/* Actions */}
