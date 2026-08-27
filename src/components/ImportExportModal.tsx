@@ -7,7 +7,7 @@ interface ImportExportModalProps {
   contacts: Contact[];
   onClose: () => void;
   onExportJson: () => void;
-  onImportJson: (importedContacts: Contact[], mode: 'replace' | 'merge') => void;
+  onImportJson: (importData: any, mode: 'replace' | 'merge') => void;
 }
 
 export const ImportExportModal: React.FC<ImportExportModalProps> = ({
@@ -32,17 +32,28 @@ export const ImportExportModal: React.FC<ImportExportModalProps> = ({
       try {
         const raw = event.target?.result as string;
         const parsed = JSON.parse(raw);
+        let isValid = false;
+        let count = 0;
+
         if (Array.isArray(parsed)) {
+          isValid = true;
+          count = parsed.length;
+        } else if (parsed && typeof parsed === 'object' && Array.isArray(parsed.contacts)) {
+          isValid = true;
+          count = parsed.contacts.length;
+        }
+
+        if (isValid) {
           onImportJson(parsed, importMode);
           setImportSuccessMessage(
-            `Erfolgreich ${parsed.length} Kontakte ${importMode === 'replace' ? 'ersetzt' : 'zusammengeführt'}!`
+            `Erfolgreich ${count} Kontakte ${importMode === 'replace' ? 'ersetzt' : 'zusammengeführt'}!`
           );
           setTimeout(() => {
             setImportSuccessMessage('');
             onClose();
           }, 1800);
         } else {
-          alert('Die gewählte JSON-Datei enthält kein gültiges Kontakt-Array.');
+          alert('Die gewählte JSON-Datei enthält kein gültiges Backup-Format (muss ein Array oder ein Objekt mit "contacts"-Array sein).');
         }
       } catch (err: any) {
         alert('Fehler beim Einlesen der JSON-Datei: ' + err.message);

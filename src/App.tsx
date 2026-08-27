@@ -336,15 +336,65 @@ export default function App() {
   };
 
   const handleExportJson = () => {
-    exportContactsToJson(contacts);
-    addToast(`${contacts.length} Kontakte als JSON gesichert.`);
+    const backupData = {
+      contacts,
+      standorte: masterStandorte,
+      abteilungen: masterAbteilungen
+    };
+    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backupData, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute('href', dataStr);
+    downloadAnchor.setAttribute('download', `Telefonliste_Backup_${new Date().toISOString().slice(0, 10)}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+    addToast(`${contacts.length} Kontakte und Stammdaten als JSON gesichert.`);
   };
 
-  const handleImportJson = async (importedContacts: Contact[], mode: 'replace' | 'merge') => {
+  const handleImportJson = async (importData: any, mode: 'replace' | 'merge') => {
+    let importedContacts: Contact[] = [];
+    let importedStandorte: string[] = [];
+    let importedAbteilungen: string[] = [];
+
+    if (Array.isArray(importData)) {
+      importedContacts = importData;
+    } else if (importData && typeof importData === 'object') {
+      importedContacts = importData.contacts || [];
+      importedStandorte = importData.standorte || [];
+      importedAbteilungen = importData.abteilungen || [];
+    }
+
+    // 1. Import contacts
     const res = await importContactsApi(importedContacts, mode);
     setContacts(res.contacts);
     setIsServerConnected(res.isServerConnected);
-    addToast(`${importedContacts.length} Kontakte erfolgreich importiert.`);
+
+    // 2. Import Master Data if present in backup file
+    if (importedStandorte.length > 0 || importedAbteilungen.length > 0) {
+      if (mode === 'replace') {
+        if (importedStandorte.length > 0) {
+          setMasterStandorte(importedStandorte);
+          await saveStandorteApi(importedStandorte);
+        }
+        if (importedAbteilungen.length > 0) {
+          setMasterAbteilungen(importedAbteilungen);
+          await saveAbteilungenApi(importedAbteilungen);
+        }
+      } else {
+        if (importedStandorte.length > 0) {
+          const mergedStandorte = Array.from(new Set([...masterStandorte, ...importedStandorte])).sort();
+          setMasterStandorte(mergedStandorte);
+          await saveStandorteApi(mergedStandorte);
+        }
+        if (importedAbteilungen.length > 0) {
+          const mergedAbteilungen = Array.from(new Set([...masterAbteilungen, ...importedAbteilungen])).sort();
+          setMasterAbteilungen(mergedAbteilungen);
+          await saveAbteilungenApi(mergedAbteilungen);
+        }
+      }
+    }
+
+    addToast(`${importedContacts.length} Kontakte und Stammdaten erfolgreich importiert.`);
   };
 
   const handlePrint = () => {
