@@ -91,7 +91,7 @@ export const ContactTable: React.FC<ContactTableProps> = ({
                 Telefon {renderSortIcon('festnetz')}
               </th>
               <th className="px-4 py-3.5">Email / Geändert am</th>
-              <th className="px-4 py-3.5">Eintritt / Austritt</th>
+              {isUnlocked && <th className="px-4 py-3.5">Eintritt / Austritt</th>}
               <th className="px-3 py-3.5 no-print text-right">Aktionen</th>
             </tr>
           </thead>
@@ -233,21 +233,23 @@ export const ContactTable: React.FC<ContactTableProps> = ({
                 </td>
 
                 {/* Eintritt / Austritt */}
-                <td className="px-4 py-3.5 text-xs text-slate-600 whitespace-nowrap">
-                  <div className="space-y-0.5">
-                    {c.eintrittDatum && (
-                      <div>
-                        <span className="text-slate-400">Ein:</span> {formatGermanDate(c.eintrittDatum)}
-                      </div>
-                    )}
-                    {c.austrittDatum && (
-                      <div className="text-red-600 font-medium">
-                        <span className="text-slate-400">Aus:</span> {formatGermanDate(c.austrittDatum)}
-                      </div>
-                    )}
-                    {!c.eintrittDatum && !c.austrittDatum && <span className="text-slate-300">-</span>}
-                  </div>
-                </td>
+                {isUnlocked && (
+                  <td className="px-4 py-3.5 text-xs text-slate-600 whitespace-nowrap">
+                    <div className="space-y-0.5">
+                      {c.eintrittDatum && (
+                        <div>
+                          <span className="text-slate-400">Ein:</span> {formatGermanDate(c.eintrittDatum)}
+                        </div>
+                      )}
+                      {c.austrittDatum && (
+                        <div className="text-red-600 font-medium">
+                          <span className="text-slate-400">Aus:</span> {formatGermanDate(c.austrittDatum)}
+                        </div>
+                      )}
+                      {!c.eintrittDatum && !c.austrittDatum && <span className="text-slate-300">-</span>}
+                    </div>
+                  </td>
+                )}
 
                  {/* Actions */}
                 <td className="px-3 py-3.5 text-right no-print whitespace-nowrap">

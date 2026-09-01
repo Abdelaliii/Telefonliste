@@ -161,9 +161,9 @@ export const ContactCard: React.FC<ContactCardProps> = ({
         </div>
 
         {/* Eintritt/Austritt & Geändert metadata block */}
-        {(contact.eintrittDatum || contact.austrittDatum || contact.geandertAm) && (
+        {((isUnlocked && (contact.eintrittDatum || contact.austrittDatum)) || contact.geandertAm) && (
           <div className="mt-3 pt-3 border-t border-slate-100/60 text-[11px] text-slate-500 space-y-1">
-            {(contact.eintrittDatum || contact.austrittDatum) && (
+            {isUnlocked && (contact.eintrittDatum || contact.austrittDatum) && (
               <div className="flex flex-wrap gap-x-3 gap-y-0.5">
                 {contact.eintrittDatum && (
                   <div>
