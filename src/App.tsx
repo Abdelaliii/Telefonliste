@@ -29,6 +29,8 @@ import { Contact as ContactIcon, Plus, Building2, Database, RefreshCw } from 'lu
 export default function App() {
   // Lock / unlock mode state
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [showPastExits, setShowPastExits] = useState(true);
+  const [showFutureEntries, setShowFutureEntries] = useState(true);
 
   // Contacts State
   const [contacts, setContacts] = useState<Contact[]>(() => loadContactsFromStorage());
@@ -194,46 +196,45 @@ export default function App() {
   const filteredAndSortedContacts = useMemo(() => {
     let result = [...contacts];
 
-    // Filter by Eintritt/Austritt date rules for standard (non-admin / locked) users
-    if (!isUnlocked) {
-      const todayYMD = (() => {
-        const now = new Date();
-        const y = now.getFullYear();
-        const m = String(now.getMonth() + 1).padStart(2, '0');
-        const d = String(now.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
-      })();
+    // Filter by Eintritt/Austritt date rules
+    const todayYMD = (() => {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    })();
 
-      const normalizeDateToYMD = (dateStr?: string): string | null => {
-        if (!dateStr || !dateStr.trim()) return null;
-        const str = dateStr.trim();
-        if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
-        const match = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
-        if (match) {
-          const day = match[1].padStart(2, '0');
-          const month = match[2].padStart(2, '0');
-          const year = match[3];
-          return `${year}-${month}-${day}`;
-        }
-        return null;
-      };
+    const normalizeDateToYMD = (dateStr?: string): string | null => {
+      if (!dateStr || !dateStr.trim()) return null;
+      const str = dateStr.trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+      const match = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+      if (match) {
+        const day = match[1].padStart(2, '0');
+        const month = match[2].padStart(2, '0');
+        const year = match[3];
+        return `${year}-${month}-${day}`;
+      }
+      return null;
+    };
 
-      result = result.filter((c) => {
-        // 1. Austritt date rule: Hide if austrittDatum is older than today (< todayYMD)
-        const austrittYMD = normalizeDateToYMD(c.austrittDatum);
-        if (austrittYMD && austrittYMD < todayYMD) {
-          return false;
-        }
+    result = result.filter((c) => {
+      const austrittYMD = normalizeDateToYMD(c.austrittDatum);
+      const eintrittYMD = normalizeDateToYMD(c.eintrittDatum);
 
-        // 2. Eintritt date rule: Hide if eintrittDatum is in the future (> todayYMD)
-        const eintrittYMD = normalizeDateToYMD(c.eintrittDatum);
-        if (eintrittYMD && eintrittYMD > todayYMD) {
-          return false;
-        }
+      if (!isUnlocked) {
+        // User view: Always hide past exits and future entries
+        if (austrittYMD && austrittYMD < todayYMD) return false;
+        if (eintrittYMD && eintrittYMD > todayYMD) return false;
+      } else {
+        // Admin view: Respect Admin toggle options
+        if (!showPastExits && austrittYMD && austrittYMD < todayYMD) return false;
+        if (!showFutureEntries && eintrittYMD && eintrittYMD > todayYMD) return false;
+      }
 
-        return true;
-      });
-    }
+      return true;
+    });
 
     // Filter by Search Query
     if (filters.searchQuery.trim()) {
@@ -288,7 +289,7 @@ export default function App() {
     });
 
     return result;
-  }, [contacts, filters, sortField, sortOrder, isUnlocked]);
+  }, [contacts, filters, sortField, sortOrder, isUnlocked, showPastExits, showFutureEntries]);
 
   // Handlers
   const handleSort = (field: SortField) => {
@@ -534,6 +535,11 @@ export default function App() {
           filteredCount={filteredAndSortedContacts.length}
           totalCount={contacts.length}
           onResetFilters={handleResetFilters}
+          isUnlocked={isUnlocked}
+          showPastExits={showPastExits}
+          showFutureEntries={showFutureEntries}
+          onTogglePastExits={setShowPastExits}
+          onToggleFutureEntries={setShowFutureEntries}
         />
 
         {/* Content Display (Table / Cards / Grouped / Empty State) */}

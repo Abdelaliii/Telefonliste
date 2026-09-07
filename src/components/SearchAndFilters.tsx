@@ -8,7 +8,8 @@ import {
   LayoutList, 
   LayoutGrid, 
   Layers,
-  RotateCcw
+  RotateCcw,
+  ShieldAlert
 } from 'lucide-react';
 import { ViewMode, FilterState } from '../types';
 
@@ -22,6 +23,11 @@ interface SearchAndFiltersProps {
   filteredCount: number;
   totalCount: number;
   onResetFilters: () => void;
+  isUnlocked: boolean;
+  showPastExits: boolean;
+  showFutureEntries: boolean;
+  onTogglePastExits: (show: boolean) => void;
+  onToggleFutureEntries: (show: boolean) => void;
 }
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -36,6 +42,11 @@ export const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
   filteredCount,
   totalCount,
   onResetFilters,
+  isUnlocked,
+  showPastExits,
+  showFutureEntries,
+  onTogglePastExits,
+  onToggleFutureEntries,
 }) => {
   const hasActiveFilters = 
     Boolean(filters.searchQuery) || 
@@ -219,6 +230,36 @@ export const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
           </button>
         ))}
       </div>
+
+      {/* Admin Toggle Options Bar (Visible ONLY when unlocked) */}
+      {isUnlocked && (
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-900">
+          <div className="flex items-center gap-2 font-semibold">
+            <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>Admin-Ansichtsfilter:</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-4">
+            <label className="flex items-center gap-2 cursor-pointer font-medium select-none hover:text-amber-950">
+              <input
+                type="checkbox"
+                checked={showPastExits}
+                onChange={(e) => onTogglePastExits(e.target.checked)}
+                className="w-4 h-4 rounded text-amber-600 border-amber-300 focus:ring-amber-500 cursor-pointer"
+              />
+              <span>Abgeschlossene Austritte anzeigen</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer font-medium select-none hover:text-amber-950">
+              <input
+                type="checkbox"
+                checked={showFutureEntries}
+                onChange={(e) => onToggleFutureEntries(e.target.checked)}
+                className="w-4 h-4 rounded text-amber-600 border-amber-300 focus:ring-amber-500 cursor-pointer"
+              />
+              <span>Zukünftige Eintritte anzeigen</span>
+            </label>
+          </div>
+        </div>
+      )}
 
       {/* Bottom Summary & Clear Filters */}
       <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
