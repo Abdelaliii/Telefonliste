@@ -194,6 +194,47 @@ export default function App() {
   const filteredAndSortedContacts = useMemo(() => {
     let result = [...contacts];
 
+    // Filter by Eintritt/Austritt date rules for standard (non-admin / locked) users
+    if (!isUnlocked) {
+      const todayYMD = (() => {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+      })();
+
+      const normalizeDateToYMD = (dateStr?: string): string | null => {
+        if (!dateStr || !dateStr.trim()) return null;
+        const str = dateStr.trim();
+        if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+        const match = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+        if (match) {
+          const day = match[1].padStart(2, '0');
+          const month = match[2].padStart(2, '0');
+          const year = match[3];
+          return `${year}-${month}-${day}`;
+        }
+        return null;
+      };
+
+      result = result.filter((c) => {
+        // 1. Austritt date rule: Hide if austrittDatum is older than today (< todayYMD)
+        const austrittYMD = normalizeDateToYMD(c.austrittDatum);
+        if (austrittYMD && austrittYMD < todayYMD) {
+          return false;
+        }
+
+        // 2. Eintritt date rule: Hide if eintrittDatum is in the future (> todayYMD)
+        const eintrittYMD = normalizeDateToYMD(c.eintrittDatum);
+        if (eintrittYMD && eintrittYMD > todayYMD) {
+          return false;
+        }
+
+        return true;
+      });
+    }
+
     // Filter by Search Query
     if (filters.searchQuery.trim()) {
       const q = filters.searchQuery.toLowerCase().trim();
@@ -247,7 +288,7 @@ export default function App() {
     });
 
     return result;
-  }, [contacts, filters, sortField, sortOrder]);
+  }, [contacts, filters, sortField, sortOrder, isUnlocked]);
 
   // Handlers
   const handleSort = (field: SortField) => {
